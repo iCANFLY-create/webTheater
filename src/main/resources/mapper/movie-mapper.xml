@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="movie">
+	<select id="showMovieForm" resultType="movie">
+		SELECT 
+			*
+		FROM 
+			movie
+	</select>
+	
+	<select id="timeList" resultType="time">
+		select
+			*
+		from 
+			time
+	</select>
+	
+	<select id="movietimeList" resultType="movietime">
+		SELECT 
+			*
+		FROM theater.movie as m 
+			JOIN theater.time as t 
+				ON m.movieId = t.movieId
+	</select>
+	
+	<select id="rowSeat" resultType="time">
+		SELECT
+			*
+		FROM time
+		WHERE
+			timeId = #{timeId}
+	</select>
+	
+	<select id="mtInfo" resultType="movietime">
+		SELECT 
+			*
+		FROM theater.movie as m 
+			JOIN theater.time as t 
+				ON m.movieId = t.movieId
+		WHERE
+			timeId = #{timeId}
+	</select>
+	
+	<insert id="reserve">
+		INSERT INTO
+			reserve
+		VALUES(
+			reserveId,
+			#{timeId},
+			#{seat},
+			#{totalPrice},
+			#{phone},
+			#{peopleNum}
+		)
+	</insert>
+	
+	<select id="reservedSeat" resultType="reserve">
+		SELECT
+			seat
+		FROM
+			reserve
+		WHERE
+			timeId = #{timeId}
+	</select>
+	
+	<select id="selectPhone" resultType="person">
+		SELECT
+			*
+		FROM
+			person
+		WHERE
+			phone = #{phone}
+	</select>
+	
+	<select id="reservedSeatList" resultType="time">
+		SELECT
+			seatList,reservedSeat
+		FROM
+			time
+		WHERE
+			timeId = #{timeId}
+	</select>
+	
+	<update id="addReservedSeat">
+		update
+			time
+		set
+			seatList = #{seatList},
+			reservedSeat = #{reservedSeat}
+		where
+			timeId = #{timeId}
+	</update>
+	
+	<insert id="addPersonPhone">
+		INSERT INTO
+			person
+		VALUES(
+			#{phone}
+		)
+	</insert>
+	
+	<select id="reserveTimeList" resultType="reserveTime">
+		SELECT 
+			* 
+		FROM 
+			reserve as j 
+				join time as t on j.timeId = t.timeId
+				join movie as m on t.movieId = m.movieId 
+		where 
+			j.phone = #{phone}
+		order by
+			reserveId desc
+	</select>
+</mapper>
